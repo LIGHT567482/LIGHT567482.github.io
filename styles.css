@@ -293,11 +293,11 @@ a { color: inherit; }
 .dot {
   width: .5rem; height: .5rem; border-radius: 50%;
   background: var(--lime);
-  box-shadow: 0 0 0 0 rgba(198,241,53,.7);
-  animation: pulse 2.4s infinite;
+  box-shadow: 0 0 0 0 rgba(0, 255, 21, 0.7);
+  animation: pulse 2s infinite;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(198,241,53,.7); }
+  0%   { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
   70%  { box-shadow: 0 0 0 .55rem rgba(198,241,53,0); }
   100% { box-shadow: 0 0 0 0 rgba(198,241,53,0); }
 }
@@ -647,19 +647,38 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 .footer__in .footer__top { justify-self: end; }
 
 .social { display: flex; gap: .7rem; list-style: none; margin: 0; padding: 0; }
-.social a {
+.social a, .social__btn {
   display: grid; place-items: center;
-  width: 2.7rem; height: 2.7rem;
+  width: 2.7rem; height: 2.7rem; padding: 0;
+  background: none; cursor: pointer;
   border-radius: 50%;
   border: 2px solid rgba(247, 243, 236, .22);
   color: var(--band-fg);
   transition: transform .3s var(--ease), background .3s, border-color .3s, color .3s;
 }
 .social svg { width: 1.2rem; height: 1.2rem; fill: currentColor; display: block; }
-.social a:hover, .social a:focus-visible {
+.social__btn svg { fill: none; }          /* the share glyph is stroked, not filled */
+.social a:hover, .social a:focus-visible,
+.social__btn:hover, .social__btn:focus-visible {
   background: var(--brand); border-color: var(--brand); color: var(--brand-fg);
   transform: translateY(-4px);
 }
+
+/* share button in the contact panel */
+.sharebtn { justify-content: center; width: 100%; }
+.sharebtn svg { width: 1.1rem; height: 1.1rem; }
+
+/* copy-link confirmation */
+.toast {
+  position: fixed; left: 50%; bottom: 1.5rem; z-index: 300;
+  transform: translateX(-50%) translateY(1rem);
+  background: var(--fg); color: var(--bg);
+  padding: .8rem 1.35rem; border-radius: 100px;
+  font: 700 .84rem/1 var(--mono);
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s var(--ease), transform .25s var(--ease);
+}
+.toast.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
 .footer p { margin: 0; }
 .footer__mid { opacity: .55; }
 .footer__top { text-decoration: none; border-bottom: 2px solid var(--lime); padding-bottom: .25rem; transition: color .25s; }
@@ -743,7 +762,49 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   .btn--lg { padding: .85em 1.4em; font-size: .95rem; }
 }
 
-/* ───────────── print ───────────── */
+/* ───── tablets and below: tighten the vertical rhythm ───── */
+@media (max-width: 1024px) {
+  :root { --sec-y: clamp(4rem, 9vw, 7rem); }
+  .hero { padding-top: 6.5rem; }
+}
+
+/* Tablet RANGE only. These rules sit after the ≤900 / ≤560 blocks, so an
+   open-ended max-width would win on phones and un-stack the layouts below. */
+@media (min-width: 901px) and (max-width: 1024px) {
+  .tl { grid-template-columns: 9.5rem 1fr; gap: 1.5rem; }
+  .lang { grid-template-columns: 8rem 1fr 7.5rem; }
+  .proj { padding: 2rem; gap: 1.5rem; }
+}
+
+/* ───── phone landscape: 100svh leaves no room for a full-height hero ───── */
+@media (orientation: landscape) and (max-height: 560px) {
+  .hero { min-height: auto; padding-top: 5.5rem; padding-bottom: 2.5rem; }
+  .hero__name { font-size: clamp(2rem, 6.5vw, 3.5rem); }
+  .hero__inner { grid-template-columns: minmax(0, 1fr) clamp(150px, 22vw, 220px); align-items: center; }
+  .hero__photo { order: 0; width: auto; }
+  .hero__socials { margin-top: 1.75rem; }
+  .mobile-menu { inset: 3.4rem 0 0 0; overflow-y: auto; }
+  .lightbox__fig img { max-height: 66vh; }
+}
+
+/* ───── small phones ───── */
+@media (max-width: 400px) {
+  .nav { gap: .4rem; }
+  .nav__burger { width: 2.2rem; height: 2.1rem; }
+  .theme-toggle { width: 2.1rem; height: 2.1rem; }
+  .theme-toggle svg { width: .95rem; height: .95rem; }
+  .btn--sm { padding: .5em .8em; font-size: .74rem; }
+  .proj { padding: 1.6rem 1.15rem; }
+  .coursework { padding: 1.6rem 1.25rem; }
+  .skillcard { padding: 1.5rem 1.25rem; }
+  .cvcard { padding: 1.25rem 3rem 1.25rem 1.25rem; }
+  .social a, .social__btn { width: 2.45rem; height: 2.45rem; }
+  .lightbox { padding-top: 5rem; }
+  .toast { left: 1rem; right: 1rem; transform: translateY(1rem); text-align: center; }
+  .toast.is-on { transform: translateY(0); }
+}
+
+/* ───── print ───── */
 @media print {
   /* force the light palette on paper regardless of the on-screen theme */
   :root, :root[data-theme="light"] {

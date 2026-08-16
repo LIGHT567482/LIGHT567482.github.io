@@ -71,6 +71,71 @@
     if (window.innerWidth > 900 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
   });
 
+  /* ---------- share ----------
+     URL comes from <link rel="canonical">, so it stays correct if the domain
+     changes and never shares a localhost or ?query address by accident. */
+  var canonical = document.querySelector('link[rel="canonical"]');
+  var SHARE_URL = (canonical && canonical.href) || window.location.href;
+  var toastEl = null, toastTimer = null;
+
+  function showToast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      toastEl.setAttribute('role', 'status');
+      toastEl.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    void toastEl.offsetWidth;                 // restart the transition on repeat clicks
+    toastEl.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('is-on'); }, 2600);
+  }
+
+  // execCommand path for browsers without the async clipboard API
+  function legacyCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function sharePortfolio() {
+    var data = {
+      title: 'Semucyo Joshua — Software Engineer',
+      text: 'Software engineer in Kampala, Uganda — offline-first systems, backend and Python.',
+      url: SHARE_URL
+    };
+
+    // native sheet on phones (WhatsApp, etc.); clipboard everywhere else
+    if (navigator.share) {
+      navigator.share(data).catch(function () { /* dismissed — not an error */ });
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(SHARE_URL).then(function () {
+        showToast('Link copied — paste it anywhere');
+      }).catch(function () {
+        showToast(legacyCopy(SHARE_URL) ? 'Link copied — paste it anywhere' : 'Copy this link: ' + SHARE_URL);
+      });
+      return;
+    }
+    showToast(legacyCopy(SHARE_URL) ? 'Link copied — paste it anywhere' : 'Copy this link: ' + SHARE_URL);
+  }
+
+  ['shareBtn', 'shareBtnFooter'].forEach(function (id) {
+    var b = document.getElementById(id);
+    if (b) b.addEventListener('click', sharePortfolio);
+  });
+
   /* ---------- hero grid follows the pointer ---------- */
   var hero = document.querySelector('.hero');
   var heroGrid = document.querySelector('.hero__grid');
