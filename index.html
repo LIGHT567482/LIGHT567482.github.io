@@ -52,10 +52,14 @@
 
 <!-- ══════════════════ NAV ══════════════════ -->
 <header class="nav" id="nav">
-  <a href="#top" class="nav__mark" aria-label="Home">
-    <img class="nav__mark-box" src="assets/avatar.jpg" alt="" width="192" height="192">
-    <span class="nav__mark-text">Semucyo Joshua</span>
-  </a>
+  <!-- avatar and home link are separate controls: one click must not do both -->
+  <div class="nav__mark">
+    <button class="nav__avatar" id="avatarBtn" type="button"
+            aria-haspopup="dialog" aria-label="View profile photo larger">
+      <img class="nav__mark-box" src="assets/avatar.jpg" alt="" width="192" height="192">
+    </button>
+    <a href="#top" class="nav__mark-text">Semucyo Joshua</a>
+  </div>
 
   <nav class="nav__links" aria-label="Main">
     <a href="#work">Work</a>
@@ -101,7 +105,7 @@
   <div class="hero__inner">
    <div class="hero__text">
     <p class="hero__eyebrow reveal">
-      <span class="dot"></span> Kampala, Uganda &nbsp;·&nbsp; Open to internships &amp; junior roles
+      <span class="dot"></span> Kampala, Uganda &nbsp;·&nbsp; Open to jobs, internships &amp; other roles
     </p>
 
     <h1 class="hero__name reveal">
@@ -575,6 +579,21 @@
     <a href="#top" class="footer__top">Back to top ↑</a>
   </div>
 </footer>
+
+<!-- ══════════════════ PHOTO LIGHTBOX ══════════════════ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
+     aria-label="Profile photo, enlarged" hidden>
+  <button class="lightbox__close" id="lightboxClose" type="button" aria-label="Close photo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" aria-hidden="true" focusable="false">
+      <path d="M6 6l12 12M18 6L6 18"/>
+    </svg>
+  </button>
+  <figure class="lightbox__fig">
+    <img src="assets/avatar-large.jpg" alt="Semucyo Joshua" width="578" height="720">
+    <figcaption>Semucyo Joshua · Kampala, Uganda</figcaption>
+  </figure>
+</div>
 
 <script src="script.js"></script>
 </body>

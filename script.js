@@ -71,6 +71,125 @@
     if (window.innerWidth > 900 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
   });
 
+  /* ---------- hero grid follows the pointer ---------- */
+  var hero = document.querySelector('.hero');
+  var heroGrid = document.querySelector('.hero__grid');
+
+  if (hero && heroGrid && window.matchMedia('(hover: hover)').matches) {
+    var queued = false, px = 0, py = 0;
+
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      px = e.clientX - r.left;
+      py = e.clientY - r.top;
+      // one write per frame — pointermove fires far faster than the screen repaints
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        heroGrid.style.setProperty('--mx', px + 'px');
+        heroGrid.style.setProperty('--my', py + 'px');
+        queued = false;
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- typewriter for the hero blurb ----------
+     Types through the existing markup rather than a plain string, so the
+     <strong> stays intact and the final DOM matches what was authored. */
+  var blurb = document.querySelector('.hero__blurb');
+
+  if (blurb && !reduceMotion) {
+    typeOut(blurb, 500);
+  }
+
+  function typeOut(el, startDelay) {
+    // flatten children into [{ el: <clone or null>, text: "…" }]
+    var parts = [];
+    Array.prototype.forEach.call(el.childNodes, function (n) {
+      if (n.nodeType === 3) parts.push({ el: null, text: n.nodeValue });
+      else if (n.nodeType === 1) parts.push({ el: n.cloneNode(false), text: n.textContent });
+    });
+    if (!parts.length) return;
+
+    // pin the finished height before emptying, so the hero can't reflow mid-type
+    el.style.minHeight = el.getBoundingClientRect().height + 'px';
+    el.textContent = '';
+
+    var caret = document.createElement('span');
+    caret.className = 'caret';
+    caret.setAttribute('aria-hidden', 'true');
+    el.appendChild(caret);
+
+    var pi = 0, ci = 0, container = null;
+
+    function step() {
+      if (pi >= parts.length) {                     // done
+        setTimeout(function () {
+          if (caret.parentNode) caret.parentNode.removeChild(caret);
+          el.style.minHeight = '';
+        }, 1200);
+        return;
+      }
+
+      var part = parts[pi];
+      if (ci === 0) {
+        container = part.el || null;
+        if (container) el.insertBefore(container, caret);
+      }
+
+      var ch = part.text.charAt(ci);
+      var node = document.createTextNode(ch);
+      if (container) container.appendChild(node);
+      else el.insertBefore(node, caret);
+
+      ci++;
+      if (ci >= part.text.length) { pi++; ci = 0; }
+
+      // vary the cadence, and rest on punctuation, so it reads as hands not a metronome
+      var delay = 5 + Math.random() * 7;
+      if (ch === ',' || ch === '—') delay = 90;
+      else if (ch === '.') delay = 170;
+      setTimeout(step, delay);
+    }
+
+    setTimeout(step, startDelay);
+  }
+
+  /* ---------- profile photo lightbox ---------- */
+  var lightbox = document.getElementById('lightbox');
+  var avatarBtn = document.getElementById('avatarBtn');
+  var lbClose = document.getElementById('lightboxClose');
+  var lastFocused = null;
+
+  function openLightbox() {
+    // Safari doesn't focus a button on click, so activeElement can be <body>;
+    // fall back to the avatar so focus has somewhere real to return to.
+    var active = document.activeElement;
+    lastFocused = (active && active !== document.body) ? active : avatarBtn;
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+    lbClose.focus();               // so Esc and Enter land somewhere sensible
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    // the mobile menu may still be holding the scroll lock — only release if it isn't
+    if (burger.getAttribute('aria-expanded') !== 'true') document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
+  }
+
+  avatarBtn.addEventListener('click', openLightbox);
+  lbClose.addEventListener('click', closeLightbox);
+
+  // backdrop click closes; clicks on the figure itself must not
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+  });
+
   /* ---------- reveal on scroll ---------- */
   var revealables = document.querySelectorAll('.reveal');
 

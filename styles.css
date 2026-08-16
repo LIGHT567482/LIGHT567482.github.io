@@ -29,7 +29,7 @@
   --fg:         #F2EEE7;
   --fg-muted:   #A29CAC;
   --hair:       rgba(242, 238, 231, .16);
-  --grid:       rgba(242, 238, 231, .06);
+  --grid:       rgba(242, 238, 231, .20);   /* only shown under the pointer, so it can be bold */
   --band-bg:    #17161D;
   --band-fg:    #F7F3EC;
   --card-bg:    #201E27;
@@ -57,7 +57,7 @@
   --fg:         #111013;
   --fg-muted:   #4A4552;
   --hair:       rgba(17, 16, 19, .14);
-  --grid:       rgba(17, 16, 19, .055);
+  --grid:       rgba(17, 16, 19, .16);
   --band-bg:    #111013;
   --band-fg:    #F7F3EC;
   --card-bg:    #1B191F;
@@ -136,17 +136,31 @@ a { color: inherit; }
 }
 .nav.is-stuck { border-bottom-color: var(--fg); padding-block: .6rem; }
 
-.nav__mark { display: flex; align-items: center; gap: .6rem; text-decoration: none; margin-right: auto; }
+.nav__mark { display: flex; align-items: center; gap: .6rem; margin-right: auto; }
+
+.nav__avatar {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  line-height: 0; border-radius: 50%;
+  position: relative; z-index: 2;   /* grows over the wordmark, never under it */
+}
 .nav__mark-box {
   display: block;
   width: 2.2rem; height: 2.2rem;
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--fg);
-  transition: transform .35s var(--ease), border-color .3s;
+  /* transform-only growth: the nav layout never reflows on hover */
+  transition: transform .35s var(--ease), border-color .3s, box-shadow .35s;
 }
-.nav__mark:hover .nav__mark-box { transform: scale(1.09); border-color: var(--accent); }
-.nav__mark-text { font-weight: 700; font-size: .95rem; letter-spacing: -.01em; }
+.nav__avatar:hover .nav__mark-box,
+.nav__avatar:focus-visible .nav__mark-box {
+  transform: scale(1.55);
+  border-color: var(--accent);
+  box-shadow: 0 .5rem 1.4rem rgba(0, 0, 0, .35);
+}
+.nav__avatar:active .nav__mark-box { transform: scale(1.35); }
+
+.nav__mark-text { font-weight: 700; font-size: .95rem; letter-spacing: -.01em; text-decoration: none; }
 
 .nav__links { display: flex; gap: 1.6rem; }
 .nav__links a {
@@ -212,13 +226,29 @@ a { color: inherit; }
   padding: 7rem var(--pad) 2rem;
   overflow: hidden;
 }
+/* Grid is invisible until the pointer enters the hero, then only the patch
+   under the cursor is unmasked. JS feeds --mx/--my on pointermove. */
 .hero__grid {
+  --mx: 50%; --my: 40%;
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background-image:
     linear-gradient(to right, var(--grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
   background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.6) 42%, transparent 76%);
+          mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.6) 42%, transparent 76%);
+  opacity: 0;
+  transition: opacity .5s var(--ease);
+}
+.hero:hover .hero__grid { opacity: 1; }
+
+/* touch devices have no pointer to follow — show the original soft vignette */
+@media (hover: none) {
+  .hero__grid {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
+  }
 }
 .hero__inner {
   position: relative; z-index: 1;
@@ -309,6 +339,16 @@ a { color: inherit; }
 }
 .slash { color: var(--accent); }
 .hero__blurb { margin: 0; max-width: 46ch; color: var(--fg-muted); }
+/* blinking cursor for the typing effect */
+.caret {
+  display: inline-block;
+  width: .09em; height: 1.05em;
+  background: var(--accent);
+  margin-left: .07em;
+  vertical-align: -.16em;
+  animation: caretBlink 1s steps(1) infinite;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
 .hero__blurb strong { color: var(--ink); background: var(--lime); padding: 0 .25em; }
 
 .hero__cta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .9rem; margin-top: .5rem; }
@@ -624,6 +664,48 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 .footer__mid { opacity: .55; }
 .footer__top { text-decoration: none; border-bottom: 2px solid var(--lime); padding-bottom: .25rem; transition: color .25s; }
 .footer__top:hover { color: var(--lime); }
+
+/* ───────────── photo lightbox ───────────── */
+.lightbox[hidden] { display: none; }   /* author display: must beat the UA [hidden] rule */
+.lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  background: rgba(6, 5, 8, .86);
+  backdrop-filter: blur(10px) saturate(120%);
+  animation: lbFade .25s var(--ease);
+}
+@keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+
+.lightbox__fig {
+  margin: 0; display: grid; gap: 1.1rem; justify-items: center;
+  max-width: min(92vw, 520px);
+}
+.lightbox__fig img {
+  width: 100%; height: auto; max-height: 76vh; object-fit: contain;
+  border: 3px solid var(--cream);
+  border-radius: 22px;
+  animation: lbZoom .32s var(--ease);
+}
+@keyframes lbZoom {
+  from { transform: scale(.9); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+.lightbox__fig figcaption {
+  font: 500 .84rem/1 var(--mono); color: var(--cream); letter-spacing: .04em;
+}
+
+.lightbox__close {
+  position: absolute; top: clamp(1rem, 3vw, 2rem); right: clamp(1rem, 3vw, 2rem);
+  display: grid; place-items: center;
+  width: 2.9rem; height: 2.9rem; padding: 0;
+  background: none; color: var(--cream);
+  border: 2px solid rgba(247, 243, 236, .4); border-radius: 50%;
+  cursor: pointer;
+  transition: background .25s, border-color .25s, color .25s, transform .3s var(--ease);
+}
+.lightbox__close svg { width: 1.1rem; height: 1.1rem; }
+.lightbox__close:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(90deg); }
 
 /* ───────────── reveal on scroll ───────────── */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
