@@ -162,7 +162,37 @@ a { color: inherit; }
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
 }
-.hero__inner { position: relative; z-index: 1; width: 100%; max-width: var(--maxw); margin-inline: auto; }
+.hero__inner {
+  position: relative; z-index: 1;
+  width: 100%; max-width: var(--maxw); margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(230px, 25vw, 360px);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+.hero__text { min-width: 0; }   /* lets the huge name shrink instead of forcing overflow */
+
+/* portrait with an offset colour block behind it */
+.hero__photo { position: relative; margin: 0; }
+.hero__photo::before {
+  content: "";
+  position: absolute; inset: 1.1rem -1.1rem -1.1rem 1.1rem;
+  background: var(--lime);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  transform: rotate(2.5deg);
+  transition: transform .45s var(--ease), background .45s;
+}
+.hero__photo img {
+  position: relative; z-index: 1;
+  width: 100%; height: auto;
+  aspect-ratio: 4 / 5; object-fit: cover; object-position: center 22%;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  transition: transform .45s var(--ease);
+}
+.hero__photo:hover::before { transform: rotate(-3deg); background: var(--accent); }
+.hero__photo:hover img { transform: translate(-4px, -4px); }
 
 .hero__eyebrow {
   display: inline-flex; align-items: center; gap: .6rem;
@@ -186,7 +216,7 @@ a { color: inherit; }
 
 .hero__name {
   margin: 0;
-  font-size: clamp(3.2rem, 13vw, 11rem);
+  font-size: clamp(3rem, 9.5vw, 8.5rem);   /* sized to share the row with the portrait */
   line-height: .84;
   letter-spacing: -.045em;
   font-weight: 700;
@@ -522,6 +552,10 @@ mark { background: linear-gradient(transparent 62%, var(--lime) 62%); color: inh
   .nav__links { display: none; }
   .nav__burger { display: flex; }
   .hero__meta { grid-template-columns: 1fr; gap: 1.5rem; }
+  /* portrait first, then the text — a face reads faster than a headline on a phone */
+  .hero__inner { grid-template-columns: 1fr; gap: 2.25rem; }
+  .hero__photo { order: -1; width: min(58%, 250px); }
+  .hero__photo::before { inset: .8rem -.8rem -.8rem .8rem; }
   .contact__layout { grid-template-columns: 1fr; gap: 2.5rem; }
   .tl { grid-template-columns: 1fr; gap: .6rem; }
   .proj { grid-template-columns: 1fr; gap: .75rem; padding: 2rem 1.5rem; }
