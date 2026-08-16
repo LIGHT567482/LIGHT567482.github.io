@@ -57,7 +57,34 @@ differs: `og:url`, `og:image`, and `<link rel="canonical">`.
 Regenerate `assets/preview.png` any time your title or role changes. Test how it
 looks with [opengraph.xyz](https://www.opengraph.xyz) after deploying.
 
-### 4. Keep the CV fresh
+### 4. Swapping the photos
+
+Two image slots update the site automatically. Drop a new file in with the **same
+filename** and the page follows — no code change, no regeneration step.
+
+| File | Where it shows | Best shape |
+|---|---|---|
+| `assets/hero.jpg` | Landing page, beside your name | Portrait (taller than wide) |
+| `assets/poster.jpeg` | Link preview on WhatsApp / LinkedIn / etc. | Landscape, ideally 1200×630 |
+
+Any size or orientation works — the hero frame is locked to 4:5 by CSS
+`aspect-ratio` and fills via `object-fit: cover`, so nothing stretches or breaks.
+
+If a new hero photo sits badly in the frame (head cut off, too much headroom),
+adjust one value in `styles.css` — `object-position: center 22%`. Lower
+percentage moves the visible window up, higher moves it down.
+
+Two caches will make a swap look like it failed when it hasn't:
+
+- **Browser** — hard refresh with `Ctrl+Shift+R`. Same filename means the old
+  file is likely still cached.
+- **Social platforms** — they cache previews per page URL, so `poster.jpeg`
+  changes are not picked up until their cache expires. Force it with the
+  [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) or the
+  [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/).
+  WhatsApp has no tool — share `light567482.github.io/?v=2` to test immediately.
+
+### 5. Keep the CV fresh
 
 Replace `assets/Semucyo-Joshua-CV.pdf` whenever you update it. Keep the filename
 the same and every download button keeps working.
