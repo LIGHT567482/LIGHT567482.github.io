@@ -7,6 +7,31 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- theme toggle ----------
+     Dark is the default. The <head> script has already applied any saved
+     choice, so this only has to handle switching and persistence. */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeToggle');
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  function applyTheme(theme) {
+    var light = theme === 'light';
+    if (light) root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+
+    themeBtn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+    if (themeMeta) themeMeta.setAttribute('content', light ? '#F7F3EC' : '#0F0E12');
+  }
+
+  // sync the label with whatever the head script decided
+  applyTheme(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+
+  themeBtn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    try { localStorage.setItem('theme', next); } catch (e) { /* private mode */ }
+    applyTheme(next);
+  });
+
   /* ---------- current year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
