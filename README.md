@@ -62,10 +62,29 @@ looks with [opengraph.xyz](https://www.opengraph.xyz) after deploying.
 Two image slots update the site automatically. Drop a new file in with the **same
 filename** and the page follows — no code change, no regeneration step.
 
-| File | Where it shows | Best shape |
-|---|---|---|
-| `assets/hero.jpg` | Landing page, beside your name | Portrait (taller than wide) |
-| `assets/poster.jpeg` | Link preview on WhatsApp / LinkedIn / etc. | Landscape, ideally 1200×630 |
+| File | Where it shows | Best shape | Auto-updates? |
+|---|---|---|---|
+| `assets/hero.jpg` | Landing page, beside your name | Portrait | Yes |
+| `assets/poster.jpeg` | Source photo for the share banner | Portrait | Run `./make-banner.sh` |
+| `assets/share-banner.jpg` | The actual link preview — **generated, don't edit** | 1200×630 | — |
+
+**Why the banner is a separate generated file:** LinkedIn and Facebook download
+`og:image` and centre-crop it to 1.91:1 *on their own servers*. No meta tag can
+tell them where your face is — Twitter's `twitter:image:crop` was removed years
+ago. The only way to control the framing is to serve a file that is already
+1200×630. So after swapping `poster.jpeg`, run:
+
+```bash
+./make-banner.sh
+```
+
+That rebuilds `share-banner.jpg` from the new photo and prints the cache-clearing
+links. Edit `assets/share-banner.source.html` if you want to change the banner's
+text or layout.
+
+Known limit: the banner puts the photo on the right, so a client that crops to a
+*square* instead of 1.91:1 loses the face. LinkedIn, Facebook and WhatsApp all use
+1.91:1, so this doesn't affect them.
 
 Any size or orientation works — the hero frame is locked to 4:5 by CSS
 `aspect-ratio` and fills via `object-fit: cover`, so nothing stretches or breaks.
