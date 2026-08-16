@@ -24,9 +24,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<!-- SVG favicon with PNG fallbacks (Safari/iOS don't reliably use SVG icons) -->
-<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<!-- Photo icon, cropped square to the face. PNG, not SVG — a photograph
+     gains nothing from a vector wrapper and only pays the base64 overhead. -->
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="theme-color" content="#111013">
 </head>
@@ -37,7 +38,7 @@
 <!-- ══════════════════ NAV ══════════════════ -->
 <header class="nav" id="nav">
   <a href="#top" class="nav__mark" aria-label="Home">
-    <img class="nav__mark-box" src="assets/logo.svg" alt="" width="34" height="34">
+    <img class="nav__mark-box" src="assets/avatar.jpg" alt="" width="192" height="192">
     <span class="nav__mark-text">Semucyo Joshua</span>
   </a>
 
