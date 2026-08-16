@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Semucyo Joshua monogram">
+  <title>Semucyo Joshua</title>
+  <rect width="100" height="100" rx="24" fill="#111013"/>
+  <!-- four-point spark: same motif as the marquee dividers -->
+  <path d="M50 15 Q57 43 85 50 Q57 57 50 85 Q43 57 15 50 Q43 43 50 15 Z" fill="#C6F135"/>
+  <circle cx="78" cy="22" r="7" fill="#FF4B1F"/>
+</svg>
