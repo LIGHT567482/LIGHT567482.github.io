@@ -116,13 +116,13 @@ a { color: inherit; }
   border-radius: 100px;
   transition: transform .25s var(--ease), background .25s, color .25s, box-shadow .25s, border-color .25s;
 }
-.btn:hover { transform: translateY(-3px); box-shadow: 0 .6rem 0 -.2rem color-mix(in srgb, var(--fg) 22%, transparent); }
+
 .btn:active { transform: translateY(0); }
 .btn--sm  { padding: .55em 1.1em; font-size: .82rem; }
 .btn--lg  { padding: .95em 1.9em; font-size: 1.05rem; }
 .btn--accent { --btn-bg: var(--accent); --btn-fg: #fff; border-color: var(--accent); }
 .btn--ghost  { --btn-bg: transparent; --btn-fg: var(--fg); }
-.btn--ghost:hover { --btn-bg: var(--fg); --btn-fg: var(--bg); }
+
 
 /* ───────────── nav ───────────── */
 .nav {
@@ -152,7 +152,6 @@ a { color: inherit; }
   /* transform-only growth: the nav layout never reflows on hover */
   transition: transform .35s var(--ease), border-color .3s, box-shadow .35s;
 }
-.nav__avatar:hover .nav__mark-box,
 .nav__avatar:focus-visible .nav__mark-box {
   transform: scale(1.55);
   border-color: var(--accent);
@@ -174,7 +173,7 @@ a { color: inherit; }
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
 }
-.nav__links a:hover::after, .nav__links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav__links a.is-active::after { transform: scaleX(1); transform-origin: left; }
 .nav__links a.is-active { color: var(--accent); }
 
 /* ───────────── theme toggle ───────────── */
@@ -186,7 +185,7 @@ a { color: inherit; }
   cursor: pointer; flex-shrink: 0;
   transition: transform .35s var(--ease), background .25s, color .25s, border-color .25s;
 }
-.theme-toggle:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(25deg); }
+
 .theme-toggle svg { width: 1.05rem; height: 1.05rem; grid-area: 1 / 1; }
 /* Two-class selectors so these beat `.theme-toggle svg` (0,1,1) on specificity.
    Dark is the default state, so the sun shows — it offers the switch to light. */
@@ -240,16 +239,9 @@ a { color: inherit; }
   opacity: 0;
   transition: opacity .5s var(--ease);
 }
-.hero:hover .hero__grid { opacity: 1; }
-
-/* touch devices have no pointer to follow — show the original soft vignette */
-@media (hover: none) {
-  .hero__grid {
-    opacity: 1;
-    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
-            mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 100%);
-  }
-}
+/* Lit by JS on pointer/touch activity, not by :hover — a phone has no hover,
+   and the old `@media (hover: none)` fallback left the grid permanently on. */
+.hero__grid.is-lit { opacity: 1; }
 .hero__inner {
   position: relative; z-index: 1;
   width: 100%; max-width: var(--maxw); margin-inline: auto;
@@ -279,8 +271,8 @@ a { color: inherit; }
   border-radius: 24px;
   transition: transform .45s var(--ease), border-color .3s;
 }
-.hero__photo:hover::before { transform: rotate(-3deg); background: var(--accent); }
-.hero__photo:hover img { transform: translate(-4px, -4px); }
+
+
 
 .hero__eyebrow {
   display: inline-flex; align-items: center; gap: .6rem;
@@ -326,7 +318,7 @@ a { color: inherit; }
   -webkit-text-stroke: clamp(1.5px, .35vw, 3.5px) var(--fg);
   transition: color .5s var(--ease);
 }
-.hero__name:hover .outline { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+
 
 .hero__meta {
   display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 3rem;
@@ -360,7 +352,7 @@ a { color: inherit; }
   font: 500 .85rem/1 var(--mono);
 }
 .hero__socials a { text-decoration: none; padding-bottom: .35rem; border-bottom: 2px solid var(--fg); transition: color .25s, border-color .25s; }
-.hero__socials a:hover { color: var(--accent); border-color: var(--accent); }
+
 
 /* ───────────── marquee ───────────── */
 .marquee {
@@ -427,7 +419,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 .stat:nth-child(2) { background: var(--accent); color: #fff; }
 .stat:nth-child(3) { background: var(--blue); color: #fff; }
 .stat:nth-child(4) { background: var(--lime); color: var(--ink); }
-.stat:hover { transform: translateY(-6px); }
+
 .stat b { display: block; font-size: clamp(2.4rem, 5vw, 3.4rem); line-height: 1; letter-spacing: -.04em; }
 .stat span { font: 500 .8rem/1.4 var(--mono); opacity: .82; }
 
@@ -451,15 +443,15 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   background: var(--proj); transform: scaleY(0); transform-origin: bottom;
   transition: transform .45s var(--ease);
 }
-.proj:hover { border-color: var(--proj); transform: translateY(-5px); background: var(--card-hover); }
-.proj:hover::before { transform: scaleY(1); transform-origin: top; }
+
+
 
 .proj__num {
   font: 700 clamp(2rem, 5vw, 3.4rem)/1 var(--mono);
   color: transparent; -webkit-text-stroke: 2px var(--proj);
   transition: color .35s;
 }
-.proj:hover .proj__num { color: var(--proj); }
+
 
 .proj__title { margin: 0 0 .4rem; font-size: clamp(1.4rem, 2.8vw, 2.1rem); letter-spacing: -.03em; line-height: 1.1; }
 .proj__tag { margin: 0 0 1rem; font: 500 .78rem/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--proj); }
@@ -479,7 +471,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   padding-bottom: .3rem; border-bottom: 2px solid var(--proj);
   transition: gap .25s var(--ease), color .25s;
 }
-.proj__link:hover { gap: .9rem; color: var(--proj); }
+
 
 .coursework {
   border: 2px dashed rgba(247,243,236,.22);
@@ -506,8 +498,8 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   background: var(--c); opacity: .16;
   transition: transform .5s var(--ease), opacity .4s;
 }
-.skillcard:hover { transform: translateY(-6px); box-shadow: .6rem .6rem 0 var(--fg); }
-.skillcard:hover::after { transform: scale(1.5); opacity: .28; }
+
+
 .skillcard h3 { margin: 0 0 1rem; font-size: 1.15rem; letter-spacing: -.02em; position: relative; }
 .skillcard h3::before {
   content: ""; display: block; width: 2.2rem; height: 5px;
@@ -544,13 +536,13 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   border-bottom: 1px solid rgba(247,243,236,.16);
   transition: background .3s, padding-left .3s var(--ease);
 }
-.tl:hover { background: rgba(247,243,236,.035); padding-left: 1rem; }
+
 .tl--hi { background: rgba(255,75,31,.07); }
 .tl__when { font: 500 .84rem/1.5 var(--mono); color: var(--lime); letter-spacing: .02em; }
 .tl__what h3 { margin: 0 0 .35rem; font-size: clamp(1.1rem, 2.2vw, 1.5rem); letter-spacing: -.02em; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
 .tl__where { margin: 0 0 .8rem; font: 400 .88rem/1.4 var(--mono); color: #9C96A6; }
 .tl__org { color: var(--lime); text-decoration: none; border-bottom: 1px solid rgba(198,241,53,.4); transition: border-color .25s; }
-.tl__org:hover { border-bottom-color: var(--lime); }
+
 
 /* short "who they are" explainer — set apart from the achievement bullets */
 .tl__note {
@@ -611,11 +603,11 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 .cline > span { font: 500 .74rem/1 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--fg-muted); }
 .cline a, .cline p { margin: 0; font-size: 1.02rem; font-weight: 500; text-decoration: none; width: fit-content; }
 .cline a { border-bottom: 2px solid transparent; transition: border-color .25s, color .25s; }
-.cline a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
 /* inline brand glyph next to a contact line (WhatsApp) */
 .cline a.with-icon { display: inline-flex; align-items: center; gap: .5rem; }
 .cline a.with-icon svg { width: 1.05rem; height: 1.05rem; fill: currentColor; flex-shrink: 0; }
-.cline a.wa:hover { color: #25D366; border-bottom-color: #25D366; }
+
 
 .cvcard {
   display: grid; gap: .2rem; position: relative;
@@ -624,7 +616,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   border-radius: 18px; text-decoration: none;
   transition: transform .3s var(--ease), background .3s, color .3s;
 }
-.cvcard:hover { transform: translateY(-4px); background: var(--accent); color: #fff; }
+
 .cvcard b { font-size: 1.1rem; }
 .cvcard span { font: 400 .8rem/1.4 var(--mono); opacity: .72; }
 .cvcard i {
@@ -632,7 +624,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   font-style: normal; font-size: 1.6rem;
   transition: transform .3s var(--ease);
 }
-.cvcard:hover i { transform: translateY(-30%); }
+
 
 /* ───────────── footer ───────────── */
 .footer { background: var(--band-bg); color: var(--band-fg); padding-block: 2.25rem; transition: background .35s var(--ease); }
@@ -658,8 +650,8 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 }
 .social svg { width: 1.2rem; height: 1.2rem; fill: currentColor; display: block; }
 .social__btn svg { fill: none; }          /* the share glyph is stroked, not filled */
-.social a:hover, .social a:focus-visible,
-.social__btn:hover, .social__btn:focus-visible {
+.social a:focus-visible,
+.social__btn:focus-visible {
   background: var(--brand); border-color: var(--brand); color: var(--brand-fg);
   transform: translateY(-4px);
 }
@@ -682,7 +674,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
 .footer p { margin: 0; }
 .footer__mid { opacity: .55; }
 .footer__top { text-decoration: none; border-bottom: 2px solid var(--lime); padding-bottom: .25rem; transition: color .25s; }
-.footer__top:hover { color: var(--lime); }
+
 
 /* ───────────── photo lightbox ───────────── */
 .lightbox[hidden] { display: none; }   /* author display: must beat the UA [hidden] rule */
@@ -724,7 +716,7 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   transition: background .25s, border-color .25s, color .25s, transform .3s var(--ease);
 }
 .lightbox__close svg { width: 1.1rem; height: 1.1rem; }
-.lightbox__close:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(90deg); }
+
 
 /* ───────────── reveal on scroll ───────────── */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
@@ -741,7 +733,9 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   .hero__meta { grid-template-columns: 1fr; gap: 1.5rem; }
   /* portrait first, then the text — a face reads faster than a headline on a phone */
   .hero__inner { grid-template-columns: 1fr; gap: 2.25rem; }
-  .hero__photo { order: -1; width: min(58%, 250px); }
+  /* photo first, and pushed to the right edge; the margin leaves room for the
+     offset lime block, which sits .8rem beyond the photo's right side */
+  .hero__photo { order: -1; width: min(58%, 250px); justify-self: end; margin-right: .9rem; }
   .hero__photo::before { inset: .8rem -.8rem -.8rem .8rem; }
   .contact__layout { grid-template-columns: 1fr; gap: 2.5rem; }
   .tl { grid-template-columns: 1fr; gap: .6rem; }
@@ -802,6 +796,48 @@ mark { background: linear-gradient(transparent 62%, var(--mark) 62%); color: inh
   .lightbox { padding-top: 5rem; }
   .toast { left: 1rem; right: 1rem; transform: translateY(1rem); text-align: center; }
   .toast.is-on { transform: translateY(0); }
+}
+
+
+/* ───── hover effects, real pointers only ─────
+   Touch browsers latch :hover after a tap and keep it until you tap
+   something else, so every hover style stayed stuck on phones. This
+   guard keeps them off touch entirely; :focus-visible still applies. */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 .6rem 0 -.2rem color-mix(in srgb, var(--fg) 22%, transparent); }
+  .btn--ghost:hover { --btn-bg: var(--fg); --btn-fg: var(--bg); }
+  .nav__avatar:hover .nav__mark-box {
+  transform: scale(1.55);
+  border-color: var(--accent);
+  box-shadow: 0 .5rem 1.4rem rgba(0, 0, 0, .35);
+}
+  .nav__links a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .theme-toggle:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(25deg); }
+   { opacity: 1; }
+  .hero__photo:hover::before { transform: rotate(-3deg); background: var(--accent); }
+  .hero__photo:hover img { transform: translate(-4px, -4px); }
+  .hero__name:hover .outline { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+  .hero__socials a:hover { color: var(--accent); border-color: var(--accent); }
+  .stat:hover { transform: translateY(-6px); }
+  .proj:hover { border-color: var(--proj); transform: translateY(-5px); background: var(--card-hover); }
+  .proj:hover::before { transform: scaleY(1); transform-origin: top; }
+  .proj:hover .proj__num { color: var(--proj); }
+  .proj__link:hover { gap: .9rem; color: var(--proj); }
+  .skillcard:hover { transform: translateY(-6px); box-shadow: .6rem .6rem 0 var(--fg); }
+  .skillcard:hover::after { transform: scale(1.5); opacity: .28; }
+  .tl:hover { background: rgba(247,243,236,.035); padding-left: 1rem; }
+  .tl__org:hover { border-bottom-color: var(--lime); }
+  .cline a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .cline a.wa:hover { color: #25D366; border-bottom-color: #25D366; }
+  .cvcard:hover { transform: translateY(-4px); background: var(--accent); color: #fff; }
+  .cvcard:hover i { transform: translateY(-30%); }
+  .social a:hover,
+  .social__btn:hover {
+  background: var(--brand); border-color: var(--brand); color: var(--brand-fg);
+  transform: translateY(-4px);
+}
+  .footer__top:hover { color: var(--lime); }
+  .lightbox__close:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(90deg); }
 }
 
 /* ───── print ───── */

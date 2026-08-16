@@ -140,22 +140,45 @@
   var hero = document.querySelector('.hero');
   var heroGrid = document.querySelector('.hero__grid');
 
-  if (hero && heroGrid && window.matchMedia('(hover: hover)').matches) {
-    var queued = false, px = 0, py = 0;
+  if (hero && heroGrid) {
+    var queued = false, px = 0, py = 0, dimTimer = null;
 
-    hero.addEventListener('pointermove', function (e) {
+    function lit(on) { heroGrid.classList.toggle('is-lit', on); }
+
+    // pointer events cover mouse, touch and pen with one code path, so the
+    // grid also lights up under a finger instead of sitting permanently on
+    function track(e) {
       var r = hero.getBoundingClientRect();
       px = e.clientX - r.left;
       py = e.clientY - r.top;
-      // one write per frame — pointermove fires far faster than the screen repaints
+      clearTimeout(dimTimer);
+      lit(true);
       if (queued) return;
       queued = true;
-      requestAnimationFrame(function () {
+      requestAnimationFrame(function () {           // one write per frame
         heroGrid.style.setProperty('--mx', px + 'px');
         heroGrid.style.setProperty('--my', py + 'px');
         queued = false;
       });
+    }
+
+    // pointerdown matters for touch: a tap never fires pointermove
+    hero.addEventListener('pointerdown', track, { passive: true });
+    hero.addEventListener('pointermove', track, { passive: true });
+
+    hero.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'mouse') lit(false);
     }, { passive: true });
+
+    // A finger has no "leave", and the browser fires pointercancel as soon as a
+    // drag turns into a scroll — so fade on a timer instead of killing it dead.
+    ['pointerup', 'pointercancel'].forEach(function (type) {
+      hero.addEventListener(type, function (e) {
+        if (e.pointerType === 'mouse') return;
+        clearTimeout(dimTimer);
+        dimTimer = setTimeout(function () { lit(false); }, 700);
+      }, { passive: true });
+    });
   }
 
   /* ---------- typewriter for the hero blurb ----------
